@@ -17,6 +17,8 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityOptionsCompat;
+import androidx.databinding.BindingAdapter;
+import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -24,6 +26,9 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.example.flixster.DetailActivity;
 import com.example.flixster.MainActivity;
 import com.example.flixster.R;
+import com.example.flixster.databinding.ItemMovieBinding;
+import com.example.flixster.databinding.PopularBinding;
+import com.example.flixster.databinding.PopularMovieBinding;
 import com.example.flixster.models.Movie;
 
 import org.parceler.Parcel;
@@ -33,7 +38,7 @@ import java.util.List;
 
 public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    Context context;
+    public static Context context;
     List<Movie> movies;
 
     public MovieAdapter(Context context, List<Movie> movies) {
@@ -48,12 +53,12 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         Log.d("MovieAdapter", "onCreateViewHolder");
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         if (viewType == 0){
-            View movieView = from(context).inflate(R.layout.item_movie, parent, false);
+            ItemMovieBinding movieView = DataBindingUtil.inflate(inflater, R.layout.item_movie, parent, false);
             return new ViewHolder(movieView);
 
         }else {
-            View movieView = from(context).inflate(R.layout.popular_movie, parent, false);
-            return new ViewHolder1(movieView);
+            PopularMovieBinding movieView2 = DataBindingUtil.inflate(inflater, R.layout.popular_movie, parent, false);
+            return new ViewHolder1(movieView2);
         }
 
 
@@ -83,7 +88,7 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     @Override
     public int getItemViewType(int position) {
         int movie_type;
-        if (movies.get(position).getRating() < 7.5) {
+        if (movies.get(position).getRating() < 5) {
             // if it is low type is 0
             movie_type = 0;
         } else {
@@ -101,43 +106,28 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        RelativeLayout container;
-        TextView tvTitle;
-        TextView tvOverview;
-        ImageView ivPoster;
+        ItemMovieBinding itemmovieBinding;
 
-        public ViewHolder(@NonNull View itemView) {
-            super(itemView);
-            tvTitle = itemView.findViewById(R.id.tvtitle);
-            tvOverview = itemView.findViewById(R.id.tvOverview);
-            ivPoster = itemView.findViewById(R.id.ivPoster);
-            container = itemView.findViewById(R.id.container);
+        public ViewHolder(@NonNull ItemMovieBinding movieBinding) {
+            super(movieBinding.getRoot());
+            this.itemmovieBinding = movieBinding;
         }
 
         public void bind(Movie movie) {
-            tvTitle.setText(movie.getTitle());
-            tvOverview.setText(movie.getOverview());
-            String imageUrl;
-            // if phone is in landscape
-            if (context.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                // then imageUrl = back drop image
-                imageUrl = movie.getBackdropPath();
-            } else {
-                // else imageUrl = poster image
-                imageUrl = movie.getPosterPath();
-            }
-            Glide.with(context).load(imageUrl).placeholder(R.drawable.image_holder).into(ivPoster);
+            itemmovieBinding.setMovie(movie);
+
+//            Glide.with(context).load(imageUrl).placeholder(R.drawable.image_holder).into(ivPoster);
 
             // 1.Register click listener on the whole row
 
-            container.setOnClickListener(new View.OnClickListener() {
+            itemmovieBinding.container.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     //2. Navigate to a mew activity on tap
                     Intent i = new Intent(context, DetailActivity.class);
                     i.putExtra("movie", Parcels.wrap(movie));
                     ActivityOptionsCompat options = ActivityOptionsCompat.
-                            makeSceneTransitionAnimation((Activity) context, container, "transition");
+                            makeSceneTransitionAnimation((Activity) context, itemmovieBinding.container, "transition");
                    context.startActivity(i, options.toBundle());
                     //context.startActivity(i);
 
@@ -147,31 +137,31 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     public class ViewHolder1 extends RecyclerView.ViewHolder {
+            PopularMovieBinding popularMovieBinding;
 
-        ImageView ivPoster1;
-        RelativeLayout container1;
+        public ViewHolder1(@NonNull PopularMovieBinding popMovieBiding) {
+            super(popMovieBiding.getRoot());
+            this.popularMovieBinding = popMovieBiding;
+//            ivPoster1 = itemView.findViewById(R.id.ivPoster1);
+//            container1 = itemView.findViewById(R.id.container1);
 
-        public ViewHolder1(@NonNull View itemView) {
-            super(itemView);
-            ivPoster1 = itemView.findViewById(R.id.ivPoster1);
-            container1 = itemView.findViewById(R.id.container1);
         }
 
         public void bind(Movie movie) {
             String imageUrl1;
 
-            // then imageUrl = back drop image
-                imageUrl1 = movie.getBackdropPath();
+            popularMovieBinding.setMovie(movie);
 
-            Glide.with(context).load(imageUrl1).placeholder(R.drawable.image_holder).centerCrop().transform(new RoundedCorners(100)).into(ivPoster1);
-            container1.setOnClickListener(new View.OnClickListener() {
+//            Glide.with(context).load(imageUrl1).placeholder(R.drawable.image_holder).centerCrop().transform(new RoundedCorners(100)).into(ivPoster1);
+
+            popularMovieBinding.container1.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     //2. Navigate to a mew activity on tap
                     Intent i2 = new Intent(context, DetailActivity.class);
                     i2.putExtra("movie", Parcels.wrap(movie));
                     ActivityOptionsCompat options = ActivityOptionsCompat.
-                            makeSceneTransitionAnimation((Activity) context, container1, "transition");
+                            makeSceneTransitionAnimation((Activity) context, popularMovieBinding.container1, "transition");
                     context.startActivity(i2, options.toBundle());
                    // context.startActivity(i);
 
@@ -181,4 +171,27 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
         }
     }
+
+    public static class BindingAdapterUtils{
+        @BindingAdapter({"imageUrl"})
+        public static void loadImage1(ImageView ivPoster, String url) {
+            Glide.with(context)
+                    .load(url)
+                    .placeholder(R.drawable.image_holder)
+                    .centerCrop()
+                    .transform(new RoundedCorners(100))
+                    .into(ivPoster);
+        }
+        @BindingAdapter({"imageUrl1"})
+        public static void loadImage(ImageView ivPoster1, String url) {
+            Glide.with(context)
+                    .load(url)
+                    .placeholder(R.drawable.image_holder)
+                    .centerCrop()
+                    .transform(new RoundedCorners(100))
+                    .into(ivPoster1);
+
+        }
+    }
+
 }

@@ -1,14 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="MissingDefaultResource">
+    <data>
+        <variable name="movie" type="com.example.flixster.models.Movie"/>
+    </data>
+
+<RelativeLayout
     android:id="@+id/container1"
-    android:layout_marginBottom="2dp"
-    android:layout_marginTop="0dp"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:transitionName="transition"
-    tools:ignore="MissingDefaultResource">
+    android:transitionName="transition">
 
     <ImageView
         android:id="@+id/ivPoster1"
@@ -19,6 +22,7 @@
         android:layout_marginStart="4dp"
         android:layout_marginTop="0dp"
         android:visibility="visible"
+        app:imageUrl1='@{movie.backdropPath}'
         tools:srcCompat="@tools:sample/avatars" />
 
     <ImageView
@@ -27,8 +31,11 @@
         android:layout_height="60dp"
         android:layout_centerInParent="true"
         android:src="@drawable/play_icon1"
-        tools:srcCompat="@drawable/play_icon1" />
+        tools:srcCompat="@drawable/play_icon1"
+
+        />
 
 </RelativeLayout>
+</layout>
 
 
