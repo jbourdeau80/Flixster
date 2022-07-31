@@ -3,6 +3,7 @@ package com.example.flixster.adapter;
 import static android.view.LayoutInflater.from;
 
 import android.app.Activity;
+import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -27,7 +28,6 @@ import com.example.flixster.DetailActivity;
 import com.example.flixster.MainActivity;
 import com.example.flixster.R;
 import com.example.flixster.databinding.ItemMovieBinding;
-import com.example.flixster.databinding.PopularBinding;
 import com.example.flixster.databinding.PopularMovieBinding;
 import com.example.flixster.models.Movie;
 
@@ -57,8 +57,8 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             return new ViewHolder(movieView);
 
         }else {
-            PopularMovieBinding movieView2 = DataBindingUtil.inflate(inflater, R.layout.popular_movie, parent, false);
-            return new ViewHolder1(movieView2);
+            PopularMovieBinding movieView = DataBindingUtil.inflate(inflater, R.layout.popular_movie, parent, false);
+            return new ViewHolder1(movieView);
         }
 
 
@@ -115,6 +115,7 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
         public void bind(Movie movie) {
             itemmovieBinding.setMovie(movie);
+            itemmovieBinding.executePendingBindings();
 
 //            Glide.with(context).load(imageUrl).placeholder(R.drawable.image_holder).into(ivPoster);
 
@@ -126,7 +127,7 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                     //2. Navigate to a mew activity on tap
                     Intent i = new Intent(context, DetailActivity.class);
                     i.putExtra("movie", Parcels.wrap(movie));
-                    ActivityOptionsCompat options = ActivityOptionsCompat.
+                    ActivityOptions options = ActivityOptions.
                             makeSceneTransitionAnimation((Activity) context, itemmovieBinding.container, "transition");
                    context.startActivity(i, options.toBundle());
                     //context.startActivity(i);
@@ -151,6 +152,7 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             String imageUrl1;
 
             popularMovieBinding.setMovie(movie);
+            popularMovieBinding.executePendingBindings();
 
 //            Glide.with(context).load(imageUrl1).placeholder(R.drawable.image_holder).centerCrop().transform(new RoundedCorners(100)).into(ivPoster1);
 
@@ -160,7 +162,7 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                     //2. Navigate to a mew activity on tap
                     Intent i2 = new Intent(context, DetailActivity.class);
                     i2.putExtra("movie", Parcels.wrap(movie));
-                    ActivityOptionsCompat options = ActivityOptionsCompat.
+                    ActivityOptions options = ActivityOptions.
                             makeSceneTransitionAnimation((Activity) context, popularMovieBinding.container1, "transition");
                     context.startActivity(i2, options.toBundle());
                    // context.startActivity(i);
@@ -174,22 +176,22 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     public static class BindingAdapterUtils{
         @BindingAdapter({"imageUrl"})
-        public static void loadImage1(ImageView ivPoster, String url) {
+        public static void loadImage(ImageView view, String url) {
             Glide.with(context)
                     .load(url)
                     .placeholder(R.drawable.image_holder)
                     .centerCrop()
                     .transform(new RoundedCorners(100))
-                    .into(ivPoster);
+                    .into(view);
         }
         @BindingAdapter({"imageUrl1"})
-        public static void loadImage(ImageView ivPoster1, String url) {
+        public static void loadImage1(ImageView view, String url) {
             Glide.with(context)
                     .load(url)
                     .placeholder(R.drawable.image_holder)
                     .centerCrop()
                     .transform(new RoundedCorners(100))
-                    .into(ivPoster1);
+                    .into(view);
 
         }
     }
